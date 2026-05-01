@@ -387,3 +387,33 @@ test "pointInPolygon pentagon" {
     try std.testing.expect(pointInPolygon(50, 35, &px, &py));
     try std.testing.expect(!pointInPolygon(50, 75, &px, &py));
 }
+
+test "AABB no overlap touching edges" {
+    const a = AABB{ .x = 0, .y = 0, .w = 10, .h = 10 };
+    const b = AABB{ .x = 10, .y = 0, .w = 10, .h = 10 };
+    // Adjacent but not overlapping (a.maxX == b.minX)
+    try std.testing.expect(!a.overlaps(b));
+}
+
+test "Circle contains boundary point" {
+    const c = Circle{ .x = 5, .y = 5, .r = 3 };
+    // Point exactly on the boundary
+    try std.testing.expect(c.containsPoint(5 + 3, 5)); // (8,5) distance = 3
+    try std.testing.expect(!c.containsPoint(5 + 3.01, 5)); // slightly outside
+}
+
+test "aabbVsCircle corner case" {
+    const box = AABB{ .x = 0, .y = 0, .w = 10, .h = 10 };
+    const c = Circle{ .x = 15, .y = 15, .r = 8 };
+    // Circle center far away but radius large enough to touch corner
+    try std.testing.expect(aabbVsCircle(box, c));
+}
+
+test "Ray vs AABB from inside" {
+    const ray = Ray{ .ox = 5, .oy = 5, .dx = 1, .dy = 0 };
+    const box = AABB{ .x = 0, .y = 0, .w = 10, .h = 10 };
+    const hit = ray.vsAABB(box);
+    try std.testing.expect(hit != null);
+    // t should be 0 since origin is inside
+    try std.testing.expect(hit.?.t >= 0);
+}
