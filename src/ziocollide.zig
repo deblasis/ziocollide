@@ -532,3 +532,10 @@ test "Circle zero radius" {
     try std.testing.expect(!c.overlaps(Circle{ .x = 6, .y = 5, .r = 0 }));
     try std.testing.expect(c.containsPoint(5, 5));
 }
+
+test "pointInPolygon inside triangle" {
+    const xs = [_]f32{ 0, 10, 5 };
+    const ys = [_]f32{ 0, 0, 10 };
+    try std.testing.expect(pointInPolygon(5, 3, &xs, &ys));
+    try std.testing.expect(!pointInPolygon(20, 20, &xs, &ys));
+}
