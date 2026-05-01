@@ -452,3 +452,19 @@ test "Circle contains point from AABB center" {
     const c = Circle{ .x = box.centerX(), .y = box.centerY(), .r = 5 };
     try std.testing.expect(c.containsPoint(box.centerX(), box.centerY()));
 }
+
+test "satOverlap triangles" {
+    const ax = [_]f32{ 0, 5, 2.5 };
+    const ay = [_]f32{ 0, 0, 5 };
+    const bx = [_]f32{ 2, 7, 4.5 };
+    const by = [_]f32{ 0, 0, 5 };
+    const depth = satOverlap(&ax, &ay, &bx, &by);
+    try std.testing.expect(depth > 0);
+}
+
+test "Circle overlap at exact distance" {
+    const a = Circle{ .x = 0, .y = 0, .r = 5 };
+    const b = Circle{ .x = 10, .y = 0, .r = 5 };
+    // Distance = 10, sum of radii = 10, touching
+    try std.testing.expect(a.overlaps(b));
+}
