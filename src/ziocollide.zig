@@ -358,3 +358,32 @@ test "satOverlap separated" {
     const depth = satOverlap(&ax, &ay, &bx, &by);
     try std.testing.expect(depth < 0);
 }
+
+test "AABB merged" {
+    const a = AABB{ .x = 0, .y = 0, .w = 5, .h = 5 };
+    const b = AABB{ .x = 10, .y = 10, .w = 5, .h = 5 };
+    const m = a.merged(b);
+    try std.testing.expectEqual(@as(f32, 0), m.x);
+    try std.testing.expectEqual(@as(f32, 0), m.y);
+    try std.testing.expectEqual(@as(f32, 15), m.w);
+    try std.testing.expectEqual(@as(f32, 15), m.h);
+}
+
+test "AABB center" {
+    const a = AABB{ .x = 10, .y = 20, .w = 20, .h = 30 };
+    try std.testing.expectEqual(@as(f32, 20), a.centerX());
+    try std.testing.expectEqual(@as(f32, 35), a.centerY());
+}
+
+test "Ray vs circle miss" {
+    const ray = Ray{ .ox = -5, .oy = 20, .dx = 1, .dy = 0 };
+    const c = Circle{ .x = 5, .y = 0, .r = 3 };
+    try std.testing.expect(ray.vsCircle(c) == null);
+}
+
+test "pointInPolygon pentagon" {
+    const px = [_]f32{ 50, 80, 70, 30, 20 };
+    const py = [_]f32{ 0, 35, 70, 70, 35 };
+    try std.testing.expect(pointInPolygon(50, 35, &px, &py));
+    try std.testing.expect(!pointInPolygon(50, 75, &px, &py));
+}
