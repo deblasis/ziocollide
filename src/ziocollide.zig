@@ -417,3 +417,38 @@ test "Ray vs AABB from inside" {
     // t should be 0 since origin is inside
     try std.testing.expect(hit.?.t >= 0);
 }
+
+// --- Integration-style tests ---
+
+test "AABB then Circle collision pipeline" {
+    const box = AABB{ .x = 0, .y = 0, .w = 10, .h = 10 };
+    const c = Circle{ .x = 15, .y = 5, .r = 8 };
+
+    // Broad phase: AABB overlap
+    const broad = AABB{ .x = c.x - c.r, .y = c.y - c.r, .w = c.r * 2, .h = c.r * 2 };
+    try std.testing.expect(box.overlaps(broad));
+
+    // Narrow phase: precise circle test
+    try std.testing.expect(aabbVsCircle(box, c));
+}
+
+test "Ray cast and point-in-polygon for hit testing" {
+    const poly_x = [_]f32{ 0, 20, 20, 0 };
+    const poly_y = [_]f32{ 0, 0, 20, 20 };
+    const ray = Ray{ .ox = 10, .oy = -5, .dx = 0, .dy = 1 };
+    const box = AABB{ .x = 0, .y = 0, .w = 20, .h = 20 };
+
+    const hit = ray.vsAABB(box);
+    try std.testing.expect(hit != null);
+    if (hit) |h| {
+        const px = 10;
+        const py = h.t * ray.dy + ray.oy;
+        try std.testing.expect(pointInPolygon(px, py, &poly_x, &poly_y));
+    }
+}
+
+test "Circle contains point from AABB center" {
+    const box = AABB{ .x = 0, .y = 0, .w = 10, .h = 10 };
+    const c = Circle{ .x = box.centerX(), .y = box.centerY(), .r = 5 };
+    try std.testing.expect(c.containsPoint(box.centerX(), box.centerY()));
+}
