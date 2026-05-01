@@ -508,3 +508,15 @@ test "Circle and AABB both detect same overlap" {
     try std.testing.expect(circ.containsPoint(6, 6));
     try std.testing.expect(box.containsPoint(6, 6));
 }
+
+test "AABB overlap is symmetric" {
+    const a = AABB{ .x = 0, .y = 0, .w = 15, .h = 15 };
+    const b = AABB{ .x = 10, .y = 10, .w = 15, .h = 15 };
+    try std.testing.expectEqual(a.overlaps(b), b.overlaps(a));
+}
+
+test "Circle overlap is symmetric" {
+    const a = Circle{ .x = 0, .y = 0, .r = 5 };
+    const b = Circle{ .x = 8, .y = 0, .r = 4 };
+    try std.testing.expectEqual(a.overlaps(b), b.overlaps(a));
+}
