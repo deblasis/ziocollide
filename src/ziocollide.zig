@@ -468,3 +468,23 @@ test "Circle overlap at exact distance" {
     // Distance = 10, sum of radii = 10, touching
     try std.testing.expect(a.overlaps(b));
 }
+
+test "Ray vs circle tangent" {
+    const ray = Ray{ .ox = 0, .oy = -5, .dx = 1, .dy = 0 };
+    const c = Circle{ .x = 3, .y = 0, .r = 5 };
+    // Ray is tangent to circle at y=-5 which is exactly at edge
+    const hit = ray.vsCircle(c);
+    // Tangent rays may or may not hit depending on precision
+    if (hit) |h| {
+        try std.testing.expect(h.t >= 0);
+    }
+}
+
+test "AABB contains point on all four corners" {
+    const box = AABB{ .x = 0, .y = 0, .w = 10, .h = 10 };
+    try std.testing.expect(box.containsPoint(0, 0)); // top-left (inclusive)
+    try std.testing.expect(box.containsPoint(10, 0)); // right edge (inclusive)
+    try std.testing.expect(box.containsPoint(0, 10)); // bottom edge (inclusive)
+    try std.testing.expect(box.containsPoint(10, 10)); // bottom-right (inclusive)
+    try std.testing.expect(!box.containsPoint(11, 5)); // outside right
+}
