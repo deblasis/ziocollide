@@ -37,7 +37,7 @@ const depth = collide.satOverlap(&poly1_x, &poly1_y, &poly2_x, &poly2_y);
 ```
 
 ```bash
-zig build test          # Run 37 tests
+zig build test          # Run 40 tests
 zig build run-example   # Run example
 ```
 
