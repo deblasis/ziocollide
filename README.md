@@ -13,7 +13,6 @@ const collide = @import("ziocollide");
 const a = collide.AABB{ .x = 0, .y = 0, .w = 10, .h = 10 };
 const b = collide.AABB{ .x = 5, .y = 5, .w = 10, .h = 10 };
 if (a.overlaps(b)) {
-    const depth = a.overlapDepth(b);
     // resolve collision...
 }
 
@@ -45,10 +44,13 @@ zig build run-example   # Run example
 
 ```
 $ zig build run-example
-AABB overlap: true
-Circle contains (3,4): true
+AABB overlaps: true
+AABB containsPoint(7,7): true
 AABB vs Circle: true
-Ray hit AABB at t=5.00
+Circle containsPoint(3,4): true
+pointInPolygon(5,3): true
+Ray hit AABB at t=0.00
+SAT overlap depth: 5.00
 ```
 
 ## API
@@ -63,7 +65,7 @@ Ray hit AABB at t=5.00
 | `RayHit` | `t, nx, ny` | Ray hit result (distance + normal) |
 
 ### AABB methods
-- `overlaps(b)`, `overlapDepth(b)` — overlap test and penetration depth
+- `overlaps(b)` — overlap test
 - `containsPoint(px, py)` — point containment
 - `minX/Y()`, `maxX/Y()` — boundary accessors
 
