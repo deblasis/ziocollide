@@ -539,3 +539,10 @@ test "pointInPolygon inside triangle" {
     try std.testing.expect(pointInPolygon(5, 3, &xs, &ys));
     try std.testing.expect(!pointInPolygon(20, 20, &xs, &ys));
 }
+
+test "example: ray vs AABB at t=5" {
+    const ray = Ray{ .ox = 0, .oy = 5, .dx = 1, .dy = 0 };
+    const box = AABB{ .x = 5, .y = 0, .w = 10, .h = 10 };
+    const hit = ray.vsAABB(box).?;
+    try std.testing.expectApproxEqAbs(@as(f32, 5.0), hit.t, 0.1);
+}

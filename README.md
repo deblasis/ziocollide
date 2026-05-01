@@ -41,6 +41,16 @@ zig build test          # Run 37 tests
 zig build run-example   # Run example
 ```
 
+## Example output
+
+```
+$ zig build run-example
+AABB overlap: true
+Circle contains (3,4): true
+AABB vs Circle: true
+Ray hit AABB at t=5.00
+```
+
 ## API
 
 ### Types
