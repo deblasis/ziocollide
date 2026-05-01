@@ -488,3 +488,23 @@ test "AABB contains point on all four corners" {
     try std.testing.expect(box.containsPoint(10, 10)); // bottom-right (inclusive)
     try std.testing.expect(!box.containsPoint(11, 5)); // outside right
 }
+
+test "full collision pipeline: broad then narrow" {
+    const a = AABB{ .x = 0, .y = 0, .w = 10, .h = 10 };
+    const b = AABB{ .x = 8, .y = 8, .w = 10, .h = 10 };
+
+    // Broad phase: AABB overlap
+    try std.testing.expect(a.overlaps(b));
+
+    // Narrow phase: check point containment
+    try std.testing.expect(a.containsPoint(9, 9));
+    try std.testing.expect(b.containsPoint(9, 9));
+}
+
+test "Circle and AABB both detect same overlap" {
+    const circ = Circle{ .x = 5, .y = 5, .r = 3 };
+    const box = AABB{ .x = 4, .y = 4, .w = 5, .h = 5 };
+    // Both should agree on overlap with a nearby point
+    try std.testing.expect(circ.containsPoint(6, 6));
+    try std.testing.expect(box.containsPoint(6, 6));
+}
