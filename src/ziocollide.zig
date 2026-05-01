@@ -587,3 +587,12 @@ test "Circle large radius" {
     try std.testing.expect(c.containsPoint(999999, 0));
     try std.testing.expect(!c.containsPoint(1000001, 0));
 }
+
+test "resolve overlap by moving apart" {
+    const a = AABB{ .x = 0, .y = 0, .w = 10, .h = 10 };
+    const b = AABB{ .x = 8, .y = 0, .w = 10, .h = 10 };
+    try std.testing.expect(a.overlaps(b));
+    // Move b right by 3 units
+    const resolved = AABB{ .x = 11, .y = 0, .w = 10, .h = 10 };
+    try std.testing.expect(!a.overlaps(resolved));
+}
