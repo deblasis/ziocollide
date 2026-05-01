@@ -12,31 +12,43 @@ pub const AABB = struct {
     w: f32,
     h: f32,
 
-    pub fn minX(self: AABB) f32 { return self.x; }
-    pub fn minY(self: AABB) f32 { return self.y; }
-    pub fn maxX(self: AABB) f32 { return self.x + self.w; }
-    pub fn maxY(self: AABB) f32 { return self.y + self.h; }
-    pub fn centerX(self: AABB) f32 { return self.x + self.w / 2; }
-    pub fn centerY(self: AABB) f32 { return self.y + self.h / 2; }
+    pub fn minX(self: AABB) f32 {
+        return self.x;
+    }
+    pub fn minY(self: AABB) f32 {
+        return self.y;
+    }
+    pub fn maxX(self: AABB) f32 {
+        return self.x + self.w;
+    }
+    pub fn maxY(self: AABB) f32 {
+        return self.y + self.h;
+    }
+    pub fn centerX(self: AABB) f32 {
+        return self.x + self.w / 2;
+    }
+    pub fn centerY(self: AABB) f32 {
+        return self.y + self.h / 2;
+    }
 
     /// Does this AABB overlap another?
     pub fn overlaps(self: AABB, other: AABB) bool {
         return self.minX() < other.maxX() and
-               self.maxX() > other.minX() and
-               self.minY() < other.maxY() and
-               self.maxY() > other.minY();
+            self.maxX() > other.minX() and
+            self.minY() < other.maxY() and
+            self.maxY() > other.minY();
     }
 
     /// Does this AABB fully contain a point?
     pub fn containsPoint(self: AABB, px: f32, py: f32) bool {
         return px >= self.minX() and px <= self.maxX() and
-               py >= self.minY() and py <= self.maxY();
+            py >= self.minY() and py <= self.maxY();
     }
 
     /// Does this AABB fully contain another?
     pub fn containsAABB(self: AABB, other: AABB) bool {
         return other.minX() >= self.minX() and other.maxX() <= self.maxX() and
-               other.minY() >= self.minY() and other.maxY() <= self.maxY();
+            other.minY() >= self.minY() and other.maxY() <= self.maxY();
     }
 
     /// Merged AABB that covers both.
@@ -74,12 +86,15 @@ pub const Circle = struct {
 
 /// Ray from origin in a direction.
 pub const Ray = struct {
-    ox: f32, oy: f32, // origin
-    dx: f32, dy: f32, // direction (normalized or not)
+    ox: f32,
+    oy: f32, // origin
+    dx: f32,
+    dy: f32, // direction (normalized or not)
 
     pub const Hit = struct {
         t: f32,
-        nx: f32, ny: f32, // normal at hit point
+        nx: f32,
+        ny: f32, // normal at hit point
     };
 
     /// Intersect ray vs AABB. Returns hit with t (0 = origin, 1 = endpoint).
@@ -91,7 +106,11 @@ pub const Ray = struct {
         if (self.dx != 0) {
             var t1 = (box.minX() - self.ox) / self.dx;
             var t2 = (box.maxX() - self.ox) / self.dx;
-            if (t1 > t2) { const tmp = t1; t1 = t2; t2 = tmp; }
+            if (t1 > t2) {
+                const tmp = t1;
+                t1 = t2;
+                t2 = tmp;
+            }
             tmin = @max(tmin, t1);
             tmax = @min(tmax, t2);
             if (tmin > tmax) return null;
@@ -103,7 +122,11 @@ pub const Ray = struct {
         if (self.dy != 0) {
             var t1 = (box.minY() - self.oy) / self.dy;
             var t2 = (box.maxY() - self.oy) / self.dy;
-            if (t1 > t2) { const tmp = t1; t1 = t2; t2 = tmp; }
+            if (t1 > t2) {
+                const tmp = t1;
+                t1 = t2;
+                t2 = tmp;
+            }
             tmin = @max(tmin, t1);
             tmax = @min(tmax, t2);
             if (tmin > tmax) return null;
@@ -116,10 +139,7 @@ pub const Ray = struct {
         const hit_x = self.ox + tmin * self.dx;
         const hit_y = self.oy + tmin * self.dy;
         // Determine which face was hit
-        if (@abs(hit_x - box.minX()) < 0.001) nx = -1
-        else if (@abs(hit_x - box.maxX()) < 0.001) nx = 1
-        else if (@abs(hit_y - box.minY()) < 0.001) ny = -1
-        else ny = 1;
+        if (@abs(hit_x - box.minX()) < 0.001) nx = -1 else if (@abs(hit_x - box.maxX()) < 0.001) nx = 1 else if (@abs(hit_y - box.minY()) < 0.001) ny = -1 else ny = 1;
 
         return .{ .t = tmin, .nx = nx, .ny = ny };
     }
@@ -173,8 +193,10 @@ pub fn pointInPolygon(px: f32, py: f32, poly_x: []const f32, poly_y: []const f32
 /// Separating Axis Theorem overlap for two convex polygons.
 /// Returns penetration depth (negative = no overlap).
 pub fn satOverlap(
-    ax: []const f32, ay: []const f32,
-    bx: []const f32, by: []const f32,
+    ax: []const f32,
+    ay: []const f32,
+    bx: []const f32,
+    by: []const f32,
 ) f32 {
     var min_overlap = std.math.floatMax(f32);
 
@@ -185,7 +207,10 @@ pub fn satOverlap(
         const axis_x = -edge_y;
         const axis_y = edge_x;
         const len = @sqrt(axis_x * axis_x + axis_y * axis_y);
-        if (len == 0) { j = i; continue; }
+        if (len == 0) {
+            j = i;
+            continue;
+        }
         const nx = axis_x / len;
         const ny = axis_y / len;
 
@@ -218,7 +243,10 @@ pub fn satOverlap(
         const axis_x = -edge_y;
         const axis_y = edge_x;
         const len = @sqrt(axis_x * axis_x + axis_y * axis_y);
-        if (len == 0) { j = i; continue; }
+        if (len == 0) {
+            j = i;
+            continue;
+        }
         const nx = axis_x / len;
         const ny = axis_y / len;
 
