@@ -520,3 +520,15 @@ test "Circle overlap is symmetric" {
     const b = Circle{ .x = 8, .y = 0, .r = 4 };
     try std.testing.expectEqual(a.overlaps(b), b.overlaps(a));
 }
+
+test "AABB zero-size at origin" {
+    const box = AABB{ .x = 0, .y = 0, .w = 0, .h = 0 };
+    try std.testing.expect(box.containsPoint(0, 0));
+    try std.testing.expect(!box.containsPoint(1, 0));
+}
+
+test "Circle zero radius" {
+    const c = Circle{ .x = 5, .y = 5, .r = 0 };
+    try std.testing.expect(!c.overlaps(Circle{ .x = 6, .y = 5, .r = 0 }));
+    try std.testing.expect(c.containsPoint(5, 5));
+}
