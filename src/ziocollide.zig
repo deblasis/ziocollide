@@ -574,3 +574,16 @@ test "example: ray vs AABB at t=5" {
     const hit = ray.vsAABB(box).?;
     try std.testing.expectApproxEqAbs(@as(f32, 5.0), hit.t, 0.1);
 }
+
+test "AABB large coordinates" {
+    const a = AABB{ .x = 1e6, .y = 1e6, .w = 100, .h = 100 };
+    const b = AABB{ .x = 1e6 + 50, .y = 1e6 + 50, .w = 100, .h = 100 };
+    try std.testing.expect(a.overlaps(b));
+    try std.testing.expect(a.containsPoint(1e6 + 50, 1e6 + 50));
+}
+
+test "Circle large radius" {
+    const c = Circle{ .x = 0, .y = 0, .r = 1e6 };
+    try std.testing.expect(c.containsPoint(999999, 0));
+    try std.testing.expect(!c.containsPoint(1000001, 0));
+}
